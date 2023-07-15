@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+    mysql:
+        image: mysql:8.0
+        container_name: blog
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: "root"
+            MYSQL_DATABASE: "test"
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        ports:
+            - "3306:3306"
