@@ -32,7 +32,7 @@ class Home extends Controller
         // $post->thumb= "https://picsum.photos/640/480";
         // $post->save();
 
-        return $input;
+        return response($input, 201);
     }
 
     public function showById(Request $request, string $id)
@@ -42,5 +42,20 @@ class Home extends Controller
         $post = Post::with(["user","comments"])->where("id",$int)->first();
 
         return $post;
+    }
+
+    public function destroy(Request $request, string $id)
+    {
+        $input = intval($id);
+
+
+        if(!$input){
+            return response()->json(["message"=>"Id not provide please provide id","success"=>false],404);
+        }
+
+        Post::destroy($input);
+
+
+        return response("",204);
     }
 }

@@ -25,7 +25,7 @@ class UserController extends Controller
             "thumb" => "https://api.minimalavatars.com/avatar/minimal/png"
         ]);
 
-        return $user;
+        return response($user, 201);
     }
 
     public static function login(Request $request,Response $response)
@@ -35,6 +35,10 @@ class UserController extends Controller
 
         if(!isset($input["email"])){
             return response()->json(["message"=> "Email not provide please provide email","success"=>false],404);
+        }
+
+        if(!isset($input["password"])){
+            return response()->json(["message"=> "Password not provide please provide password","success"=>false],404);
         }
 
         $user = User::where("email",$input["email"])->first();
@@ -58,5 +62,19 @@ class UserController extends Controller
         $publications = Post::with(["comments","user"])->where("user_id",$id)->orderby("created_at","desc")->get();
 
         return $publications;
+    }
+
+    public static function destroy(Request $request, string $id)
+    {
+        $id = intval($id);
+
+        if(!$id){
+            return response()->json(["message"=>"Id not provide please provide id","success"=>false],404);
+        }
+
+        User::destroy($id);
+
+
+        return response("",204);
     }
 }

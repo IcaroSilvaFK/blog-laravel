@@ -13,7 +13,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get("/posts/home", [Home::class, 'index']);
 Route::post("/posts/store", [Home::class, 'store']);
 Route::get("/posts/{id}", [Home::class, 'showById']);
+Route::delete("/posts/{id}", [Home::class, "destroy"]);
 Route::post("/users/store",[UserController::class,"index"]);
 Route::post("/users/login",[UserController::class,"login"]);
 Route::post("/users/{id}",[UserController::class,"showPublications"]);
+Route::delete("/users/{id}",[UserController::class,"destroy"]);
 ROute::post("/comments/store",[CommentsController::class,"index"]);
