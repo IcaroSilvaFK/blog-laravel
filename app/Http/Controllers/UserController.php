@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Models\User;
 use App\Models\Post;
 use Illuminate\Support\Facades\Hash;
+use \Illuminate\Contracts\Auth;
 
 class UserController extends Controller
 {
@@ -28,30 +29,29 @@ class UserController extends Controller
         return response($user, 201);
     }
 
-    public static function login(Request $request,Response $response)
+    public static function login(Request $request)
     {
-
-        $input = $request->only(["email","password"]);
-
-        if(!isset($input["email"])){
-            return response()->json(["message"=> "Email not provide please provide email","success"=>false],404);
+        //TODO validate request
+        $input = $request->validate([
+            "email" => ["required","email"],
+            "password" => ["required"]
+        ]);
+        if(!auth()->attempt($input)){
+            return response()->json(["message" => "Password or email invalid","success"=>false],401);
         }
 
-        if(!isset($input["password"])){
-            return response()->json(["message"=> "Password not provide please provide password","success"=>false],404);
-        }
 
-        $user = User::where("email",$input["email"])->first();
+        $token = auth()->user()->createToken('personal-token',expiresAt:now()->addDay())->plainTextToken;
 
-        if(!$user){
-            return response()->json(["message"=> "Password or email invalid","success"=>false],401);
-        }
-        if(!Hash::check($input["password"],$user["password"])){
-            return response()->json(["message"=> "Password or email is invalid","success"=>false],401);
-        }
+        return response()->json(["token"=>$token,"success"=>true],200);
+    }
 
-        return response()->json(["message"=> "User found","success"=>true,"user"=> $user],200);
+    public static function me(Request $request){
 
+        $user = auth()->user();
+
+
+        return response($user,200);
     }
 
 

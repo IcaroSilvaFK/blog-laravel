@@ -7,14 +7,18 @@ use App\Models\Post;
 
 class Home extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $posts = Post::with(['user','comments'])->limit(10)->orderby('id', 'desc')->get();
+        $limit = $request->query("limit");
+
+        $posts = Post::with(['user','comments'])->limit($limit ? $limit : 10)->orderby('id', 'desc')->get();
 
         return $posts;
     }
 
     public function store(Request $request){
+
+
 
         $input = $request->only(["title","content","user_id","slug"]);
         $post = Post::create([
@@ -39,7 +43,7 @@ class Home extends Controller
     {
         $int = intval($id);
 
-        $post = Post::with(["user","comments"])->where("id",$int)->first();
+        $post = Post::with(["user","comments","comments.user"])->where("id",$int)->first();
 
         return $post;
     }
